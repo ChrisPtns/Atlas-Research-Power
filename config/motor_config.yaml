@@ -1,0 +1,35 @@
+# Motor Configuration for Atlas Aqua Control
+i2c:
+  bus: 1
+  pca9685_address: 0x40
+  frequency_hz: 50
+
+motors:
+  thruster_1:
+    channel: 0
+    min_pulse_us: 1100
+    neutral_pulse_us: 1500
+    max_pulse_us: 1900
+    reversed: false
+  thruster_2:
+    channel: 1
+    min_pulse_us: 1100
+    neutral_pulse_us: 1500
+    max_pulse_us: 1900
+    reversed: false
+  thruster_3:
+    channel: 2
+    min_pulse_us: 1100
+    neutral_pulse_us: 1500
+    max_pulse_us: 1900
+    reversed: false
+  thruster_4:
+    channel: 3
+    min_pulse_us: 1100
+    neutral_pulse_us: 1500
+    max_pulse_us: 1900
+    reversed: false
+
+limits:
+  max_throttle: 1.0
+  deadband: 0.05
