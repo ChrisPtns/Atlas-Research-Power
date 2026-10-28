@@ -20,7 +20,7 @@ class ThrusterDriver:
         if motor_cfg.get("reversed", False):
             throttle = -throttle #Αν είναι αντιστραμμένο, αλλάζει το πρόσημο της ισχύος
 
-# Διαβάζει τα όρια παλμών από το YAML
+# Διαβάζει τα όρια παλμών από το YAML αρχείο 
 
         min_us = motor_cfg["min_pulse_us"] #1100 μs 
         neutral_us = motor_cfg["neutral_pulse_us"] #1500
@@ -36,4 +36,6 @@ class ThrusterDriver:
         #Ορίζει την ισχύ ενός μοτέρ
         if thrust_name not in self.config["motors"]:
             raise ValueError(f"Motor '{thrust_name}' not found in configuration.")
+
+
         
