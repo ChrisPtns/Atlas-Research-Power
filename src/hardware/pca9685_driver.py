@@ -4,7 +4,7 @@ from board import SCL, SDA # Ορίζει φυσικό pin για το πρωτ�
 import busio #Βιβλιοθήκη για την επικοινωνία I2C
 
 class ThrusterDriver: 
-    def __inti__(self, config_path="config/motor_config.yaml"):
+    def __init__(self, config_path="config/motor_config.yaml"):
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f) #Ανάγνωση αρχείου ρυθμίσεων YAML
 
@@ -31,4 +31,9 @@ class ThrusterDriver:
         else:
             pulse_us = neutral_us + throttle * (neutral_us - min_us)
 
-        return int(pulse_us) #Επιστρέφει τη διάρκεια του παλμού σε $\mu\text{s}$ ως ακέραιο
+        return int(pulse_us) #Επιστρέφει τη διάρκεια του παλμού σε μs ακέραιο
+    def set_throttle(self, thrust_name: str, throttle: float):
+        #Ορίζει την ισχύ ενός μοτέρ
+        if thrust_name not in self.config["motors"]:
+            raise ValueError(f"Motor '{thrust_name}' not found in configuration.")
+        
