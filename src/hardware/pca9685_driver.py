@@ -1,41 +1,41 @@
-"""PCA9685 16-channel PWM driver for motor control."""
-import logging
-import time
+import yaml #Αναγνώριση αρχείων ρυθμίσεων μορφής YAML
+from adafruit_pca9685 import PCA9685 #Κλάση διαχείρισης της πλακέτας παραγωγής σημάτων PCA9685 
+from board import SCL, SDA # Ορίζει φυσικό pin για το πρωτόκολλο I2C
+import busio #Βιβλιοθήκη για την επικοινωνία I2C
 
-logger = logging.getLogger(__name__)
+class ThrusterDriver: 
+    def __init__(self, config_path="config/motor_config.yaml"):
+        with open(config_path, 'r') as f:
+            self.config = yaml.safe_load(f) #Ανάγνωση αρχείου ρυθμίσεων YAML
+
+        #Αρχικοποίηση I2C και PCA9685
+        i2c_bus = busio.I2C(SCL, SDA) #Αρχικοποιεί το I2C με τα Pins SCL & SDA
+        i2c_cfg = self.config.get('i2c', {}) #Απομονώνει το δίαυλο I2C του YAML (address & Συχνότητα)
+        self.pca = PCA9685(i2c_bus, address=i2c_cfg.get('address', 0x40)) #Αρχικοποιεί την πλακέτα PCA9685 με το I2C bus και τη διεύθυνση
+        self.pca.frequency = i2c_cfg["frequency_hz"] #50 Hz
+    def _throttle_to_us(self, throttle: float, motor_cfg: dict) -> int:
+        #Μετατρέπει τιμή throttle [-1.0 , 1.0] σε διάρκεια παλμπ'υ (μs)
+        throttle = max (-1.0, min (1.0, throttle))#Εξασφαλίζει τιμή στο εύρος [-1.0,1.0]
+
+        if motor_cfg.get("reversed", False):
+            throttle = -throttle #Αν είναι αντιστραμμένο, αλλάζει το πρόσημο της ισχύος
+
+# Διαβάζει τα όρια παλμών από το YAML αρχείο 
+
+        min_us = motor_cfg["min_pulse_us"] #1100 μs 
+        neutral_us = motor_cfg["neutral_pulse_us"] #1500
+        max_us = motor_cfg["max_pulse_us"] #1900
+
+        if throttle >= 0:
+             pulse_us = neutral_us + throttle * (max_us - neutral_us)
+        else:
+            pulse_us = neutral_us + throttle * (neutral_us - min_us)
+
+        return int(pulse_us) #Επιστρέφει τη διάρκεια του παλμού σε μs ακέραιο
+    def set_throttle(self, thrust_name: str, throttle: float):
+        #Ορίζει την ισχύ ενός μοτέρ
+        if thrust_name not in self.config["motors"]:
+            raise ValueError(f"Motor '{thrust_name}' not found in configuration.")
 
 
-class PCA9685Driver:
-    """Driver interface for PCA9685 PWM controller."""
-
-    def __init__(self, i2c_bus: int = 1, address: int = 0x40, frequency: int = 50):
-        self.i2c_bus = i2c_bus
-        self.address = address
-        self.frequency = frequency
-        self._connected = False
-        self._init_hardware()
-
-    def _init_hardware(self):
-        try:
-            # Placeholder for actual smbus2 or busio / adafruit PCA9685 initialization
-            logger.info("Initializing PCA9685 on bus %d, addr 0x%02X at %d Hz",
-                        self.i2c_bus, self.address, self.frequency)
-            self._connected = True
-        except Exception as e:
-            logger.warning("PCA9685 hardware not found (mock mode enabled): %s", e)
-            self._connected = False
-
-    def set_pwm(self, channel: int, pulse_us: int):
-        """Set PWM pulse length in microseconds for a channel."""
-        if not 0 <= channel < 16:
-            raise ValueError(f"Channel must be 0-15, got {channel}")
-        logger.debug("PCA9685 Ch %d -> %d us", channel, pulse_us)
-
-    def set_duty_cycle(self, channel: int, duty_cycle: float):
-        """Set duty cycle from 0.0 to 1.0."""
-        duty_cycle = max(0.0, min(1.0, duty_cycle))
-        logger.debug("PCA9685 Ch %d -> %.2f%%", channel, duty_cycle * 100)
-
-    def sleep(self):
-        """Put PCA9685 to sleep / neutral state."""
-        logger.info("Putting PCA9685 to sleep.")        
+        
