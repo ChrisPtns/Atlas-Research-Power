@@ -1,0 +1,9 @@
+Component,Voltage_V,Current_Nominal_A,Current_Peak_A,Power_Nominal_W,Power_Peak_W,Duty_Cycle_Pct,Notes
+Companion Computer,5.0,2.5,3.5,12.5,17.5,100,Raspberry Pi / SBC
+Flight Controller (Pixhawk/ArduRover),5.0,0.5,1.0,2.5,5.0,100,Avionics
+Thrusters (x4 cruise @ 2.5kn),14.8,8.0,24.0,118.4,355.2,70,T200 / Brushless
+LoRa Telemetry module,3.3,0.1,0.2,0.33,0.66,100,Telemetry link
+Sensors (IMU/Depth/GPS),5.0,0.3,0.5,1.5,2.5,100,Navigation & Telemetry
+Cameras / Payload,12.0,0.8,1.5,9.6,18.0,80,Vision system
+Total Cruise Power (W),,,,,,144.83,
+Total Peak Power (W),,,,,,398.86,
