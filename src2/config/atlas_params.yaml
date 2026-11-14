@@ -1,0 +1,35 @@
+atlas_state_machine:
+  ros__parameters:
+    loop_rate_hz: 20.0
+    lora_timeout_sec: 30.0
+    min_battery_voltage: 13.4
+    min_safe_depth_m: 0.50
+    clear_safe_depth_m: 0.70
+    debounce_ticks: 10
+atlas_path_planner:
+  ros__parameters:
+    loop_rate_hz: 20.0
+    max_surge_vel: 0.85
+    min_surge_ratio: 0.15
+    max_yaw_rate: 0.80
+    kp_yaw: 1.40
+    kd_yaw: 0.25
+    ki_cross_track: 0.05
+    lookahead_min_m: 2.0
+    lookahead_max_m: 6.0
+    lookahead_gamma: 0.45
+    acceptance_radius_m: 2.5
+    slowdown_radius_m: 5.0
+    loop_mission: false
+    default_waypoints_enu: [0.0, 0.0, 20.0, 0.0, 20.0, 15.0, 0.0, 15.0]
+atlas_pwm_mixer:
+  ros__parameters:
+    i2c_bus: 1
+    pca9685_address: 64
+    pwm_frequency_hz: 50
+    hull_track_width_m: 0.49
+    neutral_pulse_us: 1500
+    max_delta_pulse_us: 400
+atlas_temp_sensor:
+  ros__parameters:
+    poll_rate_hz: 1.0
